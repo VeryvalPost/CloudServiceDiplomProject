@@ -2,19 +2,15 @@ package netology.cloudserverdiplom.service;
 
 import netology.cloudserverdiplom.entity.User;
 import netology.cloudserverdiplom.error.AuthorizeError;
-import netology.cloudserverdiplom.logger.LoggerClass;
 import netology.cloudserverdiplom.model.AuthorizeData;
 import netology.cloudserverdiplom.model.Token;
 import netology.cloudserverdiplom.repository.UserRepo;
 import netology.cloudserverdiplom.security.JWTUtil;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.junit.jupiter.api.*;
+import org.mockito.*;
 
 import static org.mockito.Mockito.*;
+
 
 public class AuthorizeServiceTest {
 

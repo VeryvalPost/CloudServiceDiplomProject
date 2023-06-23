@@ -1,8 +1,10 @@
 package netology.cloudserverdiplom.model;
 
-import jakarta.validation.constraints.NotBlank;
+
 import lombok.*;
 import org.springframework.validation.annotation.Validated;
+
+import javax.validation.constraints.NotBlank;
 
 @Data
 @AllArgsConstructor

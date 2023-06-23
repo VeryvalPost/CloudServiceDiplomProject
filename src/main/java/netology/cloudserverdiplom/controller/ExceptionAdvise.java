@@ -21,7 +21,7 @@ public class ExceptionAdvise {
     @ExceptionHandler(FileError.class)
     public ResponseEntity handleErrorFile(FileError e) {
         log.writeLog("File error: " + e.getMessage());
-        return ResponseEntity.internalServerError().body(new FileError("File error "));
+        return ResponseEntity.status(500).body(new FileError("File error "));
     }
 
     @ExceptionHandler(TokenError.class)
