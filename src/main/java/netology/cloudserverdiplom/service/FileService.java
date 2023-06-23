@@ -12,9 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,7 +44,7 @@ public class FileService {
     public void deleteFile(String authToken, String filename) {
         validateToken(authToken);
 
-        if (fileRepo.existsByFilename(filename)) {
+        if (fileRepo.existsByAuthTokenAndFilename(authToken, filename)) {
             fileRepo.deleteByAuthTokenAndFilename(authToken, filename);
         } else throw new FileError("Can't delete. File not found");
     }
@@ -54,17 +52,18 @@ public class FileService {
     public byte[] getFile(String authToken, String filename) {
         validateToken(authToken);
 
-        byte[] fileEntity = fileRepo.findByAuthTokenAndFilename(authToken, filename).getFileData();
-        if (fileEntity == null) {
+        if (fileRepo.existsByAuthTokenAndFilename(authToken, filename)) {
+            byte[] fileEntity = fileRepo.findByAuthTokenAndFilename(authToken, filename);
+            return fileEntity;
+        } else {
             throw new FileError("Can't get. File not found");
         }
-        return fileEntity;
     }
 
     public void updateFile(String authToken, String filename, String newName) throws FileNotFoundException {
         validateToken(authToken);
 
-        File fileEntity = fileRepo.findByAuthTokenAndFilename(authToken, filename);
+        File fileEntity = fileRepo.findFileByAuthTokenAndFilename(authToken, filename);
         if (fileEntity == null) {
             throw new FileError("Can't update. File not found");
         }

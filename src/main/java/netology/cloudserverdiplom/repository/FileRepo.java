@@ -9,8 +9,9 @@ import java.util.List;
 
 @Repository
 public interface FileRepo extends JpaRepository<File, Integer> {
-    boolean existsByFilename(String filename);
+    boolean existsByAuthTokenAndFilename(String authToken, String filename);
     void deleteByAuthTokenAndFilename(String authToken, String filename);
-    File findByAuthTokenAndFilename(String authToken, String filename);
+    byte[] findByAuthTokenAndFilename(String authToken, String filename);
+    File findFileByAuthTokenAndFilename(String authToken, String filename);
     List<File> findByAuthToken(String authToken, Pageable pageable);
 }

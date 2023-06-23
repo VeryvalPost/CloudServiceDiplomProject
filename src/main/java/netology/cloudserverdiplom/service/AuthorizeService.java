@@ -17,8 +17,9 @@ public class AuthorizeService {
     private static LoggerClass logger = new LoggerClass();
 
 
-    public AuthorizeService(JWTUtil jwtUtil) {
+    public AuthorizeService(JWTUtil jwtUtil, UserRepo userRepo) {
         this.jwtUtil = jwtUtil;
+        this.userRepo = userRepo;
     }
 
     public Token login(AuthorizeData authorizeData) {
