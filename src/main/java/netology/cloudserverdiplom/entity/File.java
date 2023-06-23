@@ -21,6 +21,37 @@ public class File {
     @JoinColumn(name = "user_id")
     private User user;
 
+    public File() {
+    }
+
+    public File(int id, String authToken, String filename, byte[] fileData, User user) {
+        this.id = id;
+        this.authToken = authToken;
+        this.filename = filename;
+        this.fileData = fileData;
+        this.user = user;
+    }
+
+    public File(int id, String authToken, String filename, User user) {
+        this.id = id;
+        this.authToken = authToken;
+        this.filename = filename;
+        this.user = user;
+    }
+
+    public File(String authToken, String filename, byte[] fileData, User user) {
+        this.authToken = authToken;
+        this.filename = filename;
+        this.fileData = fileData;
+        this.user = user;
+    }
+
+    public File(String authToken, String filename, User user) {
+        this.authToken = authToken;
+        this.filename = filename;
+        this.user = user;
+    }
+
 
     public String getAuthToken() {
         return authToken;

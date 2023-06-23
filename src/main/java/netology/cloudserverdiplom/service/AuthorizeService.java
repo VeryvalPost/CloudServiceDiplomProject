@@ -1,8 +1,11 @@
 package netology.cloudserverdiplom.service;
 
+import netology.cloudserverdiplom.entity.User;
+import netology.cloudserverdiplom.error.AuthorizeError;
+import netology.cloudserverdiplom.logger.LoggerClass;
 import netology.cloudserverdiplom.model.AuthorizeData;
 import netology.cloudserverdiplom.model.Token;
-import netology.cloudserverdiplom.repository.AuthorizeRepo;
+import netology.cloudserverdiplom.repository.UserRepo;
 import netology.cloudserverdiplom.security.JWTUtil;
 import org.springframework.stereotype.Service;
 
@@ -10,27 +13,34 @@ import org.springframework.stereotype.Service;
 public class AuthorizeService {
 
     private JWTUtil jwtUtil;
-    private AuthorizeRepo authorizeRepo;
+    private UserRepo userRepo;
+    private static LoggerClass logger = new LoggerClass();
 
-    public AuthorizeService(JWTUtil jwtUtil, AuthorizeRepo authorizeRepo) {
+
+    public AuthorizeService(JWTUtil jwtUtil) {
         this.jwtUtil = jwtUtil;
-        this.authorizeRepo = authorizeRepo;
     }
 
     public Token login(AuthorizeData authorizeData) {
         String login = authorizeData.getLogin();
         String password = authorizeData.getPassword();
+        User user = userRepo.findByLogin(login);
 
-        if (authorizeRepo.isDuplicate(login)) {
-            return authorizeRepo.getAuthDataByLogin(login);
-        } else {
+        if (user.getPassword().equals(password)) {
             String authToken = jwtUtil.generateToken(login, password);
-            Token token = new Token(authToken);
-            authorizeRepo.putAuthData(login, token);
+            final Token token = new Token(authToken);
+            user.setAuthToken(authToken);
+            userRepo.saveAndFlush(user);
+            logger.writeLog("Successful authorization: " + login);
             return token;
-        }
+
+        } else throw new AuthorizeError("Wrong login or password");
     }
+
     public void logout(String login) {
-        authorizeRepo.removeAuthData(login);
+        User user = userRepo.findByLogin(login);
+        user.setAuthToken("null");
+        userRepo.saveAndFlush(user);
+        logger.writeLog("Successful logout: " + login);
     }
 }
