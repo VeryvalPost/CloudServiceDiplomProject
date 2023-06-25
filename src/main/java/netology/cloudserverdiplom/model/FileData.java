@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class FileData {
-    private String authToken;
     private String filename;
     private byte[] fileData;
 }

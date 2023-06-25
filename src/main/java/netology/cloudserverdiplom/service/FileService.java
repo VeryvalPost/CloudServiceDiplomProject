@@ -3,13 +3,13 @@ package netology.cloudserverdiplom.service;
 import netology.cloudserverdiplom.entity.File;
 import netology.cloudserverdiplom.error.FileError;
 import netology.cloudserverdiplom.error.TokenError;
-import netology.cloudserverdiplom.logger.LoggerClass;
 import netology.cloudserverdiplom.model.FileData;
 import netology.cloudserverdiplom.repository.FileRepo;
 import netology.cloudserverdiplom.repository.UserRepo;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -21,24 +21,23 @@ public class FileService {
 
     private final FileRepo fileRepo;
     private final UserRepo userRepo;
-    private static LoggerClass logger = new LoggerClass();
+    private static final Logger logger = LoggerFactory.getLogger(FileService.class);
 
     public FileService(FileRepo fileRepo, UserRepo userRepo) {
         this.fileRepo = fileRepo;
         this.userRepo = userRepo;
     }
 
-    public void uploadFile(String authToken, String filename, MultipartFile file) throws IOException {
+    public void uploadFile(String authToken, String filename, byte[] fileBytes) throws IOException {
         validateToken(authToken);
 
-        byte[] fileBytes = file.getBytes();
         File fileEntity = new File();
         fileEntity.setUser(userRepo.findUserByAuthToken(authToken));
         fileEntity.setAuthToken(authToken);
         fileEntity.setFilename(filename);
         fileEntity.setFileData(fileBytes);
         fileRepo.saveAndFlush(fileEntity);
-        logger.writeLog("Success upload " + filename);
+        logger.info("Success upload " + filename);
     }
 
     public void deleteFile(String authToken, String filename) {
@@ -79,7 +78,6 @@ public class FileService {
         List<FileData> fileDataList = new ArrayList<>();
         for (File file : files) {
             FileData fileData = new FileData();
-            fileData.setAuthToken(file.getAuthToken());
             fileData.setFilename(file.getFilename());
             fileData.setFileData(file.getFileData());
             fileDataList.add(fileData);

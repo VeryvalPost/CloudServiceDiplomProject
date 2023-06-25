@@ -12,5 +12,4 @@ public interface UserRepo extends JpaRepository<User, Integer> {
 
     User findUserByAuthToken(String authToken);
 
-    Boolean existsByLoginEquals(String login);
 }

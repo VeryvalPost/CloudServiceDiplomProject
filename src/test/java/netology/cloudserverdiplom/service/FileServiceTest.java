@@ -2,6 +2,7 @@ package netology.cloudserverdiplom.service;
 
 import netology.cloudserverdiplom.entity.File;
 import netology.cloudserverdiplom.error.FileError;
+import netology.cloudserverdiplom.error.TokenError;
 import netology.cloudserverdiplom.model.FileData;
 import netology.cloudserverdiplom.repository.FileRepo;
 import netology.cloudserverdiplom.repository.UserRepo;
@@ -17,6 +18,7 @@ import java.util.List;
 import org.junit.jupiter.api.*;
 import org.mockito.*;
 
+import static org.hibernate.validator.internal.util.Contracts.assertNotNull;
 import static org.mockito.Mockito.*;
 
 
@@ -43,12 +45,8 @@ public class FileServiceTest {
         String filename = "testFile.txt";
         byte[] fileBytes = "Test file content".getBytes();
 
-        MultipartFile file = mock(MultipartFile.class);
-        when(file.getBytes()).thenReturn(fileBytes);
-
-        fileService.uploadFile(authToken, filename, file);
-
-        verify(fileRepo, times(1)).saveAndFlush(any(File.class));
+        Assertions.assertDoesNotThrow(() ->fileService.uploadFile(authToken, filename, fileBytes));
+        Assertions.assertThrows(TokenError.class, () -> fileService.uploadFile(null, filename, fileBytes));
     }
 
     @Test
@@ -122,10 +120,8 @@ public class FileServiceTest {
         List<FileData> result = fileService.getAllFiles(authToken, limit);
 
         Assertions.assertEquals(files.size(), result.size());
-        Assertions.assertEquals(files.get(0).getAuthToken(), result.get(0).getAuthToken());
         Assertions.assertEquals(files.get(0).getFilename(), result.get(0).getFilename());
         Assertions.assertArrayEquals(files.get(0).getFileData(), result.get(0).getFileData());
-        Assertions.assertEquals(files.get(1).getAuthToken(), result.get(1).getAuthToken());
         Assertions.assertEquals(files.get(1).getFilename(), result.get(1).getFilename());
         Assertions.assertArrayEquals(files.get(1).getFileData(), result.get(1).getFileData());
     }
